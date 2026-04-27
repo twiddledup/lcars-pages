@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TroyCars · CMS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap');
+
+:root {
+  --bg: #0c0a14; --bg-panel: #100d1e; --bg-screen: #080610;
+  --frame: #2a2440; --elbow: #3a3060;
+  --magenta: #cc44aa; --magenta-hot: #ff33bb;
+  --violet: #7b4fa6; --violet-lt: #9966cc; --violet-pale: #bb99dd;
+  --purple-dk: #3d1f66; --purple-mid: #5c3399;
+  --teal: #00ccbb; --teal-dk: #008877; --teal-pale: #66ddcc;
+  --gold: #ffaa00; --gold-pale: #ffcc66;
+  --green: #44cc88; --cyan: #33ddff;
+  --text: #cdb8f0; --text-dim: #7755aa; --white: #fff;
+  --gm: rgba(255,51,187,.4); --gv: rgba(123,79,166,.4); --gt: rgba(0,204,187,.4);
+  --font: 'Antonio', 'Arial Narrow', Arial, sans-serif;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); }
+
+/* ── LOCK SCREEN ──────────────────────────────────────────────── */
+#lockScreen {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.lock-card {
+  background: var(--bg-panel);
+  border: 1.5px solid var(--elbow);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: min(400px, 90vw);
+  text-align: center;
+}
+.lock-delta {
+  font-size: 3rem; color: var(--magenta);
+  margin-bottom: 8px; letter-spacing: .05em;
+}
+.lock-title {
+  font-size: .7rem; letter-spacing: .32em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 32px;
+}
+.lock-input {
+  width: 100%; padding: 14px 20px;
+  background: var(--bg-screen);
+  border: 1.5px solid var(--elbow);
+  border-radius: 12px;
+  color: var(--white); font-family: var(--font);
+  font-size: 1.1rem; letter-spacing: .15em;
+  text-align: center; outline: none;
+  margin-bottom: 16px;
+  transition: border-color .2s;
+}
+.lock-input:focus { border-color: var(--magenta); box-shadow: 0 0 16px rgba(204,68,170,.2); }
+.lock-btn {
+  width: 100%; padding: 14px;
+  background: var(--magenta); color: var(--bg);
+  border: none; border-radius: 12px;
+  font-family: var(--font); font-size: 1rem;
+  font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; cursor: pointer;
+  transition: all .2s;
+}
+.lock-btn:hover { background: var(--magenta-hot); box-shadow: 0 0 24px var(--gm); }
+.lock-error { color: var(--gold); font-size: .7rem; letter-spacing: .15em; margin-top: 12px; height: 20px; }
+
+/* ── APP SHELL ────────────────────────────────────────────────── */
+#app { display: none; height: 100vh; display: none; flex-direction: column; }
+#app.visible { display: flex; }
+
+/* Top chrome */
+.app-chrome {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-panel);
+  border-bottom: 2px solid var(--elbow);
+  flex-shrink: 0;
+}
+.chrome-pill {
+  background: var(--magenta); color: var(--bg);
+  font-size: 1.1rem; font-weight: 700; letter-spacing: .12em;
+  padding: 6px 20px; border-radius: 20px 4px 4px 20px;
+  white-space: nowrap;
+}
+.chrome-strip {
+  height: 5px; border-radius: 3px;
+  background: linear-gradient(to right, var(--magenta), var(--violet), var(--teal), var(--gold));
+}
+.chrome-right { display: flex; gap: 8px; align-items: center; }
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 8px var(--green);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+@keyframes statusPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* Tab bar */
+.tab-bar {
+  display: flex; gap: 2px; padding: 8px 16px 0;
+  background: var(--bg-panel); flex-shrink: 0;
+}
+.tab {
+  padding: 8px 20px; font-size: .72rem; letter-spacing: .18em;
+  text-transform: uppercase; cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  color: var(--text-dim);
+  transition: all .2s; border: none;
+  background: transparent; font-family: var(--font);
+}
+.tab.active { background: var(--bg); color: var(--magenta); border-bottom: 2px solid var(--magenta); }
+.tab:hover:not(.active) { color: var(--text); }
+
+/* ── MAIN AREA ────────────────────────────────────────────────── */
+.main-area {
+  flex: 1; overflow: hidden;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  background: var(--bg);
+}
+
+/* Sidebar */
+.cms-sidebar {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--elbow);
+  display: flex; flex-direction: column;
+  overflow-y: auto; padding: 12px 0;
+}
+.sidebar-section-label {
+  font-size: .58rem; letter-spacing: .28em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding: 8px 16px 4px;
+}
+.sidebar-item {
+  padding: 10px 16px; cursor: pointer;
+  font-size: .78rem; letter-spacing: .1em;
+  color: var(--violet-pale); transition: all .15s;
+  display: flex; align-items: center; gap: 8px;
+  border-left: 3px solid transparent;
+}
+.sidebar-item:hover { background: rgba(123,79,166,.1); color: var(--white); }
+.sidebar-item.active { background: rgba(204,68,170,.1); color: var(--magenta); border-color: var(--magenta); }
+.sidebar-item-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.sidebar-new-btn {
+  margin: 12px; padding: 10px 16px;
+  background: var(--purple-dk); color: var(--violet-pale);
+  border: 1px dashed var(--violet); border-radius: 10px;
+  font-family: var(--font); font-size: .72rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  cursor: pointer; transition: all .2s; width: calc(100% - 24px);
+}
+.sidebar-new-btn:hover { background: var(--purple-mid); color: var(--white); }
+
+/* Content pane */
+.cms-content { overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+/* Editor card */
+.editor-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--elbow);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.editor-card-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--elbow);
+  background: rgba(255,255,255,.02);
+}
+.editor-card-label {
+  font-size: .62rem; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--text-dim);
+}
+.editor-card-body { padding: 20px; }
+
+/* Form elements */
+.field-label {
+  font-size: .62rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 6px; display: block;
+}
+.field-input {
+  width: 100%; padding: 12px 16px;
+  background: var(--bg-screen);
+  border: 1.5px solid var(--elbow);
+  border-radius: 10px;
+  color: var(--white); font-family: var(--font);
+  font-size: .9rem; letter-spacing: .06em;
+  outline: none; transition: border-color .2s;
+  margin-bottom: 16px;
+}
+.field-input:focus { border-color: var(--teal); box-shadow: 0 0 12px rgba(0,204,187,.15); }
+.field-textarea {
+  min-height: 280px; resize: vertical;
+  line-height: 1.6; font-size: .85rem;
+}
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Rich editor toolbar */
+.editor-toolbar {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--elbow);
+  background: rgba(255,255,255,.015);
+}
+.toolbar-btn {
+  padding: 5px 10px; font-size: .72rem;
+  background: var(--frame); color: var(--text);
+  border: 1px solid var(--elbow); border-radius: 6px;
+  cursor: pointer; font-family: var(--font);
+  letter-spacing: .08em; transition: all .15s;
+}
+.toolbar-btn:hover { background: var(--elbow); color: var(--white); }
+.toolbar-divider { width: 1px; background: var(--elbow); margin: 0 4px; }
+
+/* Publish bar */
+.publish-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  background: var(--bg-panel);
+  border-top: 2px solid var(--elbow);
+  flex-shrink: 0;
+}
+.publish-status { flex: 1; font-size: .7rem; letter-spacing: .14em; color: var(--text-dim); }
+.publish-btn {
+  padding: 12px 28px;
+  background: var(--magenta); color: var(--bg);
+  border: none; border-radius: 10px;
+  font-family: var(--font); font-size: .85rem;
+  font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+  position: relative; overflow: hidden;
+}
+.publish-btn:hover { background: var(--magenta-hot); box-shadow: 0 0 20px var(--gm); }
+.publish-btn.publishing {
+  background: var(--teal-dk); color: var(--teal-pale);
+  pointer-events: none;
+}
+.draft-btn {
+  padding: 12px 20px;
+  background: var(--purple-dk); color: var(--violet-pale);
+  border: 1px solid var(--violet); border-radius: 10px;
+  font-family: var(--font); font-size: .85rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+}
+.draft-btn:hover { background: var(--purple-mid); color: var(--white); }
+
+/* Settings tab */
+.settings-grid { display: grid; gap: 16px; }
+.setting-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-panel); border: 1px solid var(--elbow);
+  border-radius: 12px;
+}
+.setting-info { flex: 1; }
+.setting-name { font-size: .8rem; letter-spacing: .1em; color: var(--white); }
+.setting-desc { font-size: .65rem; letter-spacing: .1em; color: var(--text-dim); margin-top: 3px; }
+.toggle-pill {
+  position: relative; width: 52px; height: 28px; flex-shrink: 0;
+}
+.toggle-pill input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0; border-radius: 14px;
+  background: var(--frame); border: 1px solid var(--elbow);
+  cursor: pointer; transition: all .3s;
+}
+.toggle-pill input:checked + .toggle-track { background: var(--teal); border-color: var(--teal); box-shadow: 0 0 12px var(--gt); }
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--text-dim); transition: transform .3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+}
+.toggle-pill input:checked ~ .toggle-thumb { transform: translateX(24px); background: var(--white); }
+
+/* GitHub config */
+.github-card {
+  background: var(--bg-panel); border: 1px solid var(--elbow);
+  border-radius: 16px; padding: 24px;
+}
+.github-status {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: 10px;
+  background: rgba(68,204,136,.08); border: 1px solid rgba(68,204,136,.2);
+  margin-bottom: 20px; font-size: .72rem; letter-spacing: .1em;
+  color: var(--green);
+}
+
+/* Notification toast */
+.toast {
+  position: fixed; bottom: 80px; right: 24px;
+  background: var(--bg-panel); border: 1.5px solid var(--teal);
+  border-radius: 12px; padding: 14px 20px;
+  font-size: .78rem; letter-spacing: .1em; color: var(--teal-pale);
+  box-shadow: 0 8px 32px rgba(0,0,0,.4), 0 0 20px var(--gt);
+  transform: translateY(100px); opacity: 0;
+  transition: all .3s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 50;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.error { border-color: var(--gold); color: var(--gold-pale); box-shadow: 0 8px 32px rgba(0,0,0,.4), 0 0 20px var(--gg); }
+
+/* Panel view */
+#panelsTab .panel-preview-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 16px;
+}
+.panel-preview {
+  background: var(--bg-screen); border: 1px solid var(--elbow);
+  border-radius: 12px; overflow: hidden; cursor: pointer;
+  transition: all .2s;
+}
+.panel-preview:hover { border-color: var(--violet); transform: translateY(-2px); }
+.panel-preview-img {
+  height: 100px;
+  background: linear-gradient(135deg, var(--purple-dk), var(--bg-screen));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; color: var(--violet);
+}
+.panel-preview-info { padding: 10px 12px; }
+.panel-preview-name { font-size: .72rem; letter-spacing: .1em; color: var(--white); }
+.panel-preview-desc { font-size: .62rem; letter-spacing: .1em; color: var(--text-dim); margin-top: 3px; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Lock Screen -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-delta">✦ TROY</div>
+    <div class="lock-title">TroyCars CMS · Secure Access</div>
+    <input type="password" class="lock-input" id="pwInput" placeholder="PASSCODE" maxlength="32"
+      onkeydown="if(event.key==='Enter')unlock()">
+    <button class="lock-btn" onclick="unlock()">ACCESS GRANTED</button>
+    <div class="lock-error" id="lockError"></div>
+    <div style="margin-top:24px;font-size:.58rem;letter-spacing:.2em;color:var(--text-dim)">
+      Set your passcode in cms/config.js
+    </div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <!-- Chrome -->
+  <div class="app-chrome">
+    <div class="chrome-pill">TroyCars CMS</div>
+    <div class="chrome-strip"></div>
+    <div class="chrome-right">
+      <div class="status-dot"></div>
+      <span style="font-size:.62rem;letter-spacing:.18em;color:var(--text-dim)" id="stardateEl">—</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('blog', this)">Blog Posts</button>
+    <button class="tab" onclick="switchTab('pages', this)">Pages</button>
+    <button class="tab" onclick="switchTab('panels', this)">Glass Panels</button>
+    <button class="tab" onclick="switchTab('settings', this)">Settings</button>
+  </div>
+
+  <!-- Main -->
+  <div class="main-area">
+    <!-- Sidebar -->
+    <div class="cms-sidebar" id="cmsSidebar">
+      <div class="sidebar-section-label">Posts</div>
+      <div id="postList"></div>
+      <button class="sidebar-new-btn" onclick="newPost()">+ New Post</button>
+    </div>
+
+    <!-- Content -->
+    <div class="cms-content" id="cmsContent">
+
+      <!-- BLOG TAB -->
+      <div id="blogTab">
+        <div class="editor-card">
+          <div class="editor-card-header">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--magenta);box-shadow:0 0 8px var(--gm)"></div>
+            <div class="editor-card-label" id="postEditorLabel">New Post</div>
+            <div style="flex:1"></div>
+            <span style="font-size:.6rem;color:var(--text-dim);letter-spacing:.1em" id="lastSaved">Not saved</span>
+          </div>
+          <div class="editor-card-body">
+            <div class="field-row">
+              <div>
+                <label class="field-label">Post Title</label>
+                <input type="text" class="field-input" id="postTitle" placeholder="Mission Log: First Contact">
+              </div>
+              <div>
+                <label class="field-label">Slug (URL)</label>
+                <input type="text" class="field-input" id="postSlug" placeholder="mission-log-first-contact">
+              </div>
+            </div>
+            <div class="field-row">
+              <div>
+                <label class="field-label">Category</label>
+                <select class="field-input" id="postCategory" style="cursor:pointer">
+                  <option value="log">Mission Log</option>
+                  <option value="work">Work</option>
+                  <option value="tech">Tech</option>
+                  <option value="design">Design</option>
+                  <option value="trek">Trek</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label">Status</label>
+                <select class="field-input" id="postStatus" style="cursor:pointer">
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="field-label">Excerpt / Summary</label>
+              <input type="text" class="field-input" id="postExcerpt" placeholder="A brief summary for the post card...">
+            </div>
+          </div>
+          <div class="editor-toolbar">
+            <button class="toolbar-btn" onclick="insertMd('**','**')">B</button>
+            <button class="toolbar-btn" onclick="insertMd('*','*')" style="font-style:italic">I</button>
+            <button class="toolbar-btn" onclick="insertMd('\n## ','')">H2</button>
+            <button class="toolbar-btn" onclick="insertMd('\n### ','')">H3</button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" onclick="insertMd('\n- ','')">• List</button>
+            <button class="toolbar-btn" onclick="insertMd('\n> ','')">Quote</button>
+            <button class="toolbar-btn" onclick="insertMd('\n```\n','\n```')">Code</button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" onclick="insertMd('[','](url)')">Link</button>
+            <button class="toolbar-btn" onclick="insertMd('![alt](',')')">Image</button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" onclick="togglePreview()" id="previewToggle">Preview</button>
+          </div>
+          <div class="editor-card-body">
+            <textarea class="field-input field-textarea" id="postContent" 
+              placeholder="Write your post in Markdown...&#10;&#10;## Section Header&#10;&#10;Your content here. **Bold**, *italic*, and all the good stuff.&#10;&#10;> A great quote&#10;&#10;```&#10;code block&#10;```"
+              oninput="updateSlug()"></textarea>
+            <div id="markdownPreview" style="display:none;padding:16px;background:var(--bg-screen);border-radius:10px;font-size:.85rem;line-height:1.8;color:var(--text)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGES TAB -->
+      <div id="pagesTab" style="display:none">
+        <div class="editor-card">
+          <div class="editor-card-header">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--violet);box-shadow:0 0 8px var(--gv)"></div>
+            <div class="editor-card-label">Page Editor</div>
+          </div>
+          <div class="editor-card-body">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+              <button class="toolbar-btn" onclick="editPage('home')" style="padding:10px 16px">🏠 Landing / About</button>
+              <button class="toolbar-btn" onclick="editPage('blog')" style="padding:10px 16px">📋 Blog Index</button>
+              <button class="toolbar-btn" onclick="editPage('store')" style="padding:10px 16px">🛒 Store</button>
+            </div>
+            <label class="field-label">Page: <span id="editingPageLabel" style="color:var(--teal)">Landing / About</span></label>
+            <label class="field-label" style="margin-top:12px">Hero Title</label>
+            <input type="text" class="field-input" id="pageHeroTitle" placeholder="TROY · Principal Consultant · Experience Designer">
+            <label class="field-label">Hero Subtitle</label>
+            <input type="text" class="field-input" id="pageHeroSub" placeholder="Chicago · Disney · Hilton · Amex · TVA">
+            <label class="field-label">About / Bio Content (Markdown)</label>
+            <textarea class="field-input field-textarea" id="pageContent" style="min-height:200px" placeholder="Write about yourself..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANELS TAB -->
+      <div id="panelsTab" style="display:none">
+        <div class="editor-card">
+          <div class="editor-card-header">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--gt)"></div>
+            <div class="editor-card-label">Glass Panel Styles</div>
+          </div>
+          <div class="editor-card-body">
+            <div class="panel-preview-grid">
+              <div class="panel-preview" onclick="selectPanel('default')">
+                <div class="panel-preview-img" style="background:linear-gradient(135deg,rgba(123,79,166,.4),rgba(0,0,0,.6));backdrop-filter:blur(12px)">◈</div>
+                <div class="panel-preview-info">
+                  <div class="panel-preview-name">Standard Glass</div>
+                  <div class="panel-preview-desc">Default backdrop blur</div>
+                </div>
+              </div>
+              <div class="panel-preview" onclick="selectPanel('frost')">
+                <div class="panel-preview-img" style="background:rgba(200,190,255,0.25)">❄</div>
+                <div class="panel-preview-info">
+                  <div class="panel-preview-name">Frost</div>
+                  <div class="panel-preview-desc">Heavy blur, high opacity</div>
+                </div>
+              </div>
+              <div class="panel-preview" onclick="selectPanel('tinted')">
+                <div class="panel-preview-img" style="background:rgba(123,79,166,0.2)">◉</div>
+                <div class="panel-preview-info">
+                  <div class="panel-preview-name">Tinted Violet</div>
+                  <div class="panel-preview-desc">Color tint overlay</div>
+                </div>
+              </div>
+              <div class="panel-preview" onclick="selectPanel('clear')">
+                <div class="panel-preview-img" style="background:rgba(255,255,255,0.04)">○</div>
+                <div class="panel-preview-info">
+                  <div class="panel-preview-name">Clear / Minimal</div>
+                  <div class="panel-preview-desc">Barely-there glass</div>
+                </div>
+              </div>
+              <div class="panel-preview" onclick="selectPanel('refract')">
+                <div class="panel-preview-img" style="background:linear-gradient(45deg,rgba(0,204,187,.2),rgba(204,68,170,.2))">〜</div>
+                <div class="panel-preview-info">
+                  <div class="panel-preview-name">Liquid Refraction</div>
+                  <div class="panel-preview-desc">SVG displacement map</div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:20px;padding:16px;background:var(--bg-screen);border-radius:12px">
+              <div class="field-label" style="margin-bottom:12px">Live Tuning</div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+                <span style="font-size:.65rem;color:var(--teal-pale);width:80px">Blur</span>
+                <input type="range" min="4" max="40" value="18" style="flex:1" oninput="document.documentElement.style.setProperty('--glass-blur',this.value+'px')">
+              </div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:.65rem;color:var(--teal-pale);width:80px">Opacity</span>
+                <input type="range" min="2" max="35" value="12" style="flex:1" oninput="document.documentElement.style.setProperty('--glass-opacity',this.value/100)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS TAB -->
+      <div id="settingsTab" style="display:none">
+        <!-- GitHub config -->
+        <div class="github-card">
+          <div style="font-size:.65rem;letter-spacing:.22em;color:var(--text-dim);text-transform:uppercase;margin-bottom:16px">GitHub Connection</div>
+          <div class="github-status">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--green)"></div>
+            Configure your GitHub Personal Access Token below to enable one-tap publishing
+          </div>
+          <label class="field-label">GitHub Username</label>
+          <input type="text" class="field-input" id="ghUser" placeholder="your-username">
+          <label class="field-label">Repository Name</label>
+          <input type="text" class="field-input" id="ghRepo" placeholder="troycars-site">
+          <label class="field-label">Personal Access Token (stored locally only)</label>
+          <input type="password" class="field-input" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+          <button class="lcars-btn btn-teal" onclick="saveGitHubConfig()" style="font-size:.72rem;padding:8px 20px">Save Configuration</button>
+        </div>
+
+        <!-- Site settings -->
+        <div class="settings-grid">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Ambient Sound</div>
+              <div class="setting-desc">Starship engine hum on site load</div>
+            </div>
+            <label class="toggle-pill">
+              <input type="checkbox" id="settingAmbient">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Button Beeps</div>
+              <div class="setting-desc">LCARS click/hover sounds</div>
+            </div>
+            <label class="toggle-pill">
+              <input type="checkbox" id="settingBeeps" checked>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Space Background</div>
+              <div class="setting-desc">Animated starfield / nebula / parallax</div>
+            </div>
+            <label class="toggle-pill">
+              <input type="checkbox" id="settingBg" checked>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Liquid Glass Refraction</div>
+              <div class="setting-desc">SVG displacement filter on glass panels</div>
+            </div>
+            <label class="toggle-pill">
+              <input type="checkbox" id="settingRefract" checked>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Parallax Scroll</div>
+              <div class="setting-desc">Depth effect on background layers</div>
+            </div>
+            <label class="toggle-pill">
+              <input type="checkbox" id="settingParallax" checked>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+          <button class="lcars-btn btn-violet" onclick="saveSettings()" style="font-size:.72rem;padding:8px 20px">Save Settings</button>
+          <button class="lcars-btn btn-teal" onclick="showToast('Settings exported to clipboard!')" style="font-size:.72rem;padding:8px 20px">Export Config</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Publish bar -->
+  <div class="publish-bar">
+    <div class="publish-status" id="publishStatus">Ready · No unsaved changes</div>
+    <button class="draft-btn" onclick="saveDraft()">Save Draft</button>
+    <button class="publish-btn" id="publishBtn" onclick="publish()">Publish to Site</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── PASSCODE ──────────────────────────────────────────────────────
+// Change this to your own passcode (or move to config.js)
+const PASSCODE = 'lcars2401';
+
+function unlock() {
+  const val = document.getElementById('pwInput').value;
+  if (val === PASSCODE) {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    init();
+  } else {
+    document.getElementById('lockError').textContent = 'ACCESS DENIED · Invalid passcode';
+    document.getElementById('pwInput').value = '';
+    setTimeout(() => document.getElementById('lockError').textContent = '', 3000);
+  }
+}
+document.getElementById('pwInput').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
+
+// ── INIT ──────────────────────────────────────────────────────────
+let posts = [];
+let currentPostIdx = -1;
+
+function init() {
+  const sd = calcStardate();
+  document.getElementById('stardateEl').textContent = 'SD ' + sd;
+  loadPosts();
+  loadGitHubConfig();
+}
+
+function calcStardate() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const frac = (now - new Date(y,0,1)) / (365.25*24*3600*1000);
+  return ((y-1900)*1000 + frac*1000).toFixed(1);
+}
+
+// ── POSTS ─────────────────────────────────────────────────────────
+function loadPosts() {
+  const saved = localStorage.getItem('troycars_posts');
+  posts = saved ? JSON.parse(saved) : [
+    { id: 1, title: 'Welcome to TroyCars', slug: 'welcome', category: 'log',
+      status: 'published', excerpt: 'First post on the new LCARS interface.',
+      content: '## Welcome\n\nThis is the first log entry on the new TroyCars LCARS interface.\n\nMore to come.', date: '2026-02-27' }
+  ];
+  renderPostList();
+}
+
+function savePosts() {
+  localStorage.setItem('troycars_posts', JSON.stringify(posts));
+}
+
+function renderPostList() {
+  const list = document.getElementById('postList');
+  list.innerHTML = '';
+  posts.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'sidebar-item' + (i === currentPostIdx ? ' active' : '');
+    el.innerHTML = `
+      <div class="sidebar-item-dot" style="background:${p.status==='published'?'var(--green)':'var(--text-dim)'}"></div>
+      <span>${p.title}</span>`;
+    el.onclick = () => editPost(i);
+    list.appendChild(el);
+  });
+}
+
+function editPost(idx) {
+  currentPostIdx = idx;
+  const p = posts[idx];
+  document.getElementById('postTitle').value = p.title || '';
+  document.getElementById('postSlug').value = p.slug || '';
+  document.getElementById('postCategory').value = p.category || 'log';
+  document.getElementById('postStatus').value = p.status || 'draft';
+  document.getElementById('postExcerpt').value = p.excerpt || '';
+  document.getElementById('postContent').value = p.content || '';
+  document.getElementById('postEditorLabel').textContent = p.title;
+  renderPostList();
+}
+
+function newPost() {
+  const id = Date.now();
+  posts.unshift({ id, title: 'New Post', slug: 'new-post-' + id, category: 'log',
+    status: 'draft', excerpt: '', content: '', date: new Date().toISOString().split('T')[0] });
+  savePosts();
+  renderPostList();
+  editPost(0);
+}
+
+function updateSlug() {
+  if (currentPostIdx < 0) return;
+  const title = document.getElementById('postTitle').value;
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  document.getElementById('postSlug').value = slug;
+  document.getElementById('postEditorLabel').textContent = title || 'Untitled';
+  document.getElementById('publishStatus').textContent = 'Unsaved changes · Draft';
+}
+document.getElementById('postTitle').addEventListener('input', updateSlug);
+
+function saveDraft() {
+  if (currentPostIdx < 0) { newPost(); return; }
+  posts[currentPostIdx] = {
+    ...posts[currentPostIdx],
+    title: document.getElementById('postTitle').value,
+    slug: document.getElementById('postSlug').value,
+    category: document.getElementById('postCategory').value,
+    status: document.getElementById('postStatus').value,
+    excerpt: document.getElementById('postExcerpt').value,
+    content: document.getElementById('postContent').value,
+    date: new Date().toISOString().split('T')[0]
+  };
+  savePosts();
+  renderPostList();
+  const now = new Date().toLocaleTimeString();
+  document.getElementById('lastSaved').textContent = 'Saved ' + now;
+  document.getElementById('publishStatus').textContent = 'Draft saved · ' + now;
+  showToast('Draft saved ✓');
+}
+
+// ── PUBLISH ───────────────────────────────────────────────────────
+async function publish() {
+  saveDraft();
+  const btn = document.getElementById('publishBtn');
+  btn.textContent = 'Publishing...';
+  btn.classList.add('publishing');
+  document.getElementById('publishStatus').textContent = 'Connecting to GitHub...';
+
+  const cfg = getGitHubConfig();
+  if (!cfg.token || !cfg.user || !cfg.repo) {
+    showToast('⚠ Set up GitHub in Settings first', true);
+    btn.textContent = 'Publish to Site'; btn.classList.remove('publishing');
+    return;
+  }
+
+  try {
+    await pushToGitHub(cfg);
+    btn.textContent = 'Published! ✓';
+    document.getElementById('publishStatus').textContent = 'Live on Netlify · ' + new Date().toLocaleTimeString();
+    showToast('Published to GitHub → Netlify deploying! ✓');
+    setTimeout(() => { btn.textContent = 'Publish to Site'; btn.classList.remove('publishing'); }, 3000);
+  } catch(e) {
+    showToast('GitHub error: ' + e.message, true);
+    btn.textContent = 'Publish to Site'; btn.classList.remove('publishing');
+    document.getElementById('publishStatus').textContent = 'Error: ' + e.message;
+  }
+}
+
+async function pushToGitHub({ user, repo, token }) {
+  // Build the site JSON that will be committed
+  const siteData = {
+    posts: posts.filter(p => p.status === 'published'),
+    lastUpdated: new Date().toISOString()
+  };
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(siteData, null, 2))));
+  const path = '_data/posts.json';
+
+  // Check if file exists to get its SHA
+  let sha;
+  try {
+    const existing = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
+      headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (existing.ok) { const d = await existing.json(); sha = d.sha; }
+  } catch {}
+
+  // Commit
+  const body = { message: 'CMS: Update posts ' + new Date().toISOString(), content };
+  if (sha) body.sha = sha;
+  const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: 'token ' + token,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'GitHub API error'); }
+}
+
+// ── GITHUB CONFIG ─────────────────────────────────────────────────
+function getGitHubConfig() {
+  return {
+    user:  localStorage.getItem('tc_gh_user')  || '',
+    repo:  localStorage.getItem('tc_gh_repo')  || '',
+    token: localStorage.getItem('tc_gh_token') || ''
+  };
+}
+function loadGitHubConfig() {
+  const cfg = getGitHubConfig();
+  document.getElementById('ghUser').value  = cfg.user;
+  document.getElementById('ghRepo').value  = cfg.repo;
+  document.getElementById('ghToken').value = cfg.token;
+}
+function saveGitHubConfig() {
+  localStorage.setItem('tc_gh_user',  document.getElementById('ghUser').value);
+  localStorage.setItem('tc_gh_repo',  document.getElementById('ghRepo').value);
+  localStorage.setItem('tc_gh_token', document.getElementById('ghToken').value);
+  showToast('GitHub config saved ✓');
+}
+
+// ── TABS ──────────────────────────────────────────────────────────
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['blog','pages','panels','settings'].forEach(t => {
+    document.getElementById(t + 'Tab').style.display = t === tab ? '' : 'none';
+  });
+  const hasSidebar = tab === 'blog';
+  document.querySelector('.cms-sidebar').style.display = hasSidebar ? '' : 'none';
+  document.querySelector('.main-area').style.gridTemplateColumns = hasSidebar ? '220px 1fr' : '1fr';
+}
+
+// ── EDITOR HELPERS ────────────────────────────────────────────────
+function insertMd(before, after) {
+  const ta = document.getElementById('postContent');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const selected = ta.value.substring(s, e);
+  ta.value = ta.value.substring(0, s) + before + selected + after + ta.value.substring(e);
+  ta.focus();
+  ta.selectionStart = s + before.length;
+  ta.selectionEnd = e + before.length + (selected ? 0 : 0);
+  document.getElementById('publishStatus').textContent = 'Unsaved changes';
+}
+
+let previewing = false;
+function togglePreview() {
+  previewing = !previewing;
+  document.getElementById('postContent').style.display = previewing ? 'none' : '';
+  const preview = document.getElementById('markdownPreview');
+  preview.style.display = previewing ? '' : 'none';
+  document.getElementById('previewToggle').textContent = previewing ? 'Edit' : 'Preview';
+  if (previewing) {
+    // Basic markdown render
+    let md = document.getElementById('postContent').value;
+    md = md.replace(/^## (.+)$/gm, '<h2 style="color:var(--teal);margin:16px 0 8px;letter-spacing:.1em">$1</h2>');
+    md = md.replace(/^### (.+)$/gm, '<h3 style="color:var(--violet-pale);margin:12px 0 6px">$1</h3>');
+    md = md.replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--white)">$1</strong>');
+    md = md.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    md = md.replace(/^> (.+)$/gm, '<blockquote style="border-left:3px solid var(--magenta);padding-left:14px;color:var(--magenta-pale);margin:8px 0">$1</blockquote>');
+    md = md.replace(/^- (.+)$/gm, '<li style="margin-left:20px">$1</li>');
+    md = md.replace(/\n/g, '<br>');
+    preview.innerHTML = md;
+  }
+}
+
+function editPage(page) {
+  const labels = { home: 'Landing / About', blog: 'Blog Index', store: 'Store' };
+  document.getElementById('editingPageLabel').textContent = labels[page] || page;
+}
+
+function selectPanel(type) {
+  showToast('Glass style set: ' + type + ' ✓');
+  localStorage.setItem('tc_glass_style', type);
+}
+
+// ── SETTINGS ─────────────────────────────────────────────────────
+function saveSettings() {
+  const settings = {
+    ambient:  document.getElementById('settingAmbient').checked,
+    beeps:    document.getElementById('settingBeeps').checked,
+    bg:       document.getElementById('settingBg').checked,
+    refract:  document.getElementById('settingRefract').checked,
+    parallax: document.getElementById('settingParallax').checked,
+  };
+  localStorage.setItem('tc_settings', JSON.stringify(settings));
+  showToast('Settings saved ✓');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
