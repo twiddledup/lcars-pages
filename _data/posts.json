@@ -1,0 +1,15 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Welcome to TroyCars",
+      "slug": "welcome",
+      "category": "log",
+      "status": "published",
+      "excerpt": "First post on the new LCARS interface.",
+      "content": "## Welcome\n\nThis is the first log entry on the new TroyCars LCARS interface.\n\nMore to come.",
+      "date": "2026-02-27"
+    }
+  ],
+  "lastUpdated": "2026-04-27T22:44:16.852Z"
+}
