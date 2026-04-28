@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>First Log Entry: Welcome Aboard | My LCARS Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="format-detection" content="date=no">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="/assets/classic.css">
+  <style>
+    /* Tag pills */
+    .lcars-tags { margin: 1.2em 0 0; }
+    .lcars-tag {
+      display: inline-block;
+      background: #f90;
+      color: #000;
+      font-family: 'Antonio', sans-serif;
+      font-size: 0.75em;
+      letter-spacing: 0.08em;
+      padding: 2px 10px 2px;
+      border-radius: 20px;
+      margin: 2px 4px 2px 0;
+      text-transform: uppercase;
+    }
+    /* Post list styles */
+    .post-list { list-style: none; padding: 0; margin: 0; }
+    .post-list li { border-bottom: 1px solid #36f; padding: 1em 0; }
+    .post-list li:last-child { border-bottom: none; }
+    .post-list .post-meta { color: #f90; font-size: 0.8em; letter-spacing: 0.1em; font-family: 'Antonio', sans-serif; }
+    .post-list a { color: #99f; font-size: 1.1em; }
+    .post-list a:hover { color: #fff; }
+    .post-excerpt { color: #ccd; margin-top: 0.4em; font-size: 0.9em; }
+    /* Back link */
+    .back-link { color: #f90; font-family: 'Antonio', sans-serif; letter-spacing: 0.1em; font-size: 0.85em; text-transform: uppercase; text-decoration: none; }
+    .back-link:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <audio id="audio1" src="/assets/beep1.mp3" preload="auto"></audio>
+  <audio id="audio2" src="/assets/beep2.mp3" preload="auto"></audio>
+  <audio id="audio3" src="/assets/beep3.mp3" preload="auto"></audio>
+  <audio id="audio4" src="/assets/beep4.mp3" preload="auto"></audio>
+
+  <section class="wrap-standard" id="column-3">
+    <div class="wrap">
+      <div class="left-frame-top">
+        <button onclick="playSoundAndRedirect('audio2', '/')" class="panel-1-button">LCARS</button>
+        <div class="panel-2">02-262000</div>
+      </div>
+      <div class="right-frame-top">
+        <div class="banner">MY LCARS SITE &#149; LCARS</div>
+        <div class="data-cascade-button-group">
+          <div class="data-cascade-wrapper" id="default">
+            <div class="data-column">
+              <div class="dc-row-1">93</div><div class="dc-row-1">1853</div>
+              <div class="dc-row-2">24109</div><div class="dc-row-3">7</div>
+              <div class="dc-row-3">7024</div><div class="dc-row-4">322</div>
+              <div class="dc-row-5">4149</div><div class="dc-row-6">86</div>
+              <div class="dc-row-7">05</div>
+            </div>
+            <div class="data-column">
+              <div class="dc-row-1">21509</div><div class="dc-row-1">68417</div>
+              <div class="dc-row-2">80</div><div class="dc-row-3">2048</div>
+              <div class="dc-row-3">319825</div><div class="dc-row-4">46233</div>
+              <div class="dc-row-5">05</div><div class="dc-row-6">2014</div>
+              <div class="dc-row-7">30986</div>
+            </div>
+            <div class="data-column">
+              <div class="dc-row-1">585101</div><div class="dc-row-1">25403</div>
+              <div class="dc-row-2">31219</div><div class="dc-row-3">752</div>
+              <div class="dc-row-3">0604</div><div class="dc-row-4">21048</div>
+              <div class="dc-row-5">293612</div><div class="dc-row-6">534082</div>
+              <div class="dc-row-7">206</div>
+            </div>
+            <div class="data-column">
+              <div class="dc-row-1">1701D</div><div class="dc-row-1">47000</div>
+              <div class="dc-row-2">NCC</div><div class="dc-row-3">1701</div>
+              <div class="dc-row-3">98</div><div class="dc-row-4">4024161</div>
+              <div class="dc-row-5">888</div><div class="dc-row-6">35045</div>
+              <div class="dc-row-7">41520</div>
+            </div>
+            <div class="data-column">
+              <div class="dc-row-1">33</div><div class="dc-row-1">56</div>
+              <div class="dc-row-2">04</div><div class="dc-row-3">69</div>
+              <div class="dc-row-3">41</div><div class="dc-row-4">15</div>
+              <div class="dc-row-5">25</div><div class="dc-row-6">65</div>
+              <div class="dc-row-7">21</div>
+            </div>
+          </div>
+          <nav>
+            <button onclick="playSoundAndRedirect('audio2', '/')">HOME</button>
+            <button onclick="playSoundAndRedirect('audio2', '/logs/')">LOGS</button>
+            <button onclick="playSoundAndRedirect('audio2', '/about/')">ABOUT</button>
+            <button onclick="playSoundAndRedirect('audio2', '/contact/')">COMMS</button>
+          </nav>
+        </div>
+        <div class="bar-panel first-bar-panel">
+          <div class="bar-1"></div><div class="bar-2"></div>
+          <div class="bar-3"></div><div class="bar-4"></div><div class="bar-5"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap" id="gap">
+      <div class="left-frame">
+        <button onclick="topFunction(); playSoundAndRedirect('audio4', '#')" id="topBtn"><span class="hop">screen</span> top</button>
+        <div>
+          <div class="panel-3">03<span class="hop">-111968</span></div>
+          <div class="panel-4">04<span class="hop">-041969</span></div>
+          <div class="panel-5">05<span class="hop">-1701D</span></div>
+          <div class="panel-6">06<span class="hop">-071984</span></div>
+          <div class="panel-7">07<span class="hop">-081940</span></div>
+          <div class="panel-8">08<span class="hop">-47148</span></div>
+          <div class="panel-9">09<span class="hop">-081966</span></div>
+        </div>
+        <div>
+          <div class="panel-10">10<span class="hop">-31</span></div>
+        </div>
+      </div>
+      <div class="right-frame">
+        <div class="bar-panel">
+          <div class="bar-6"></div><div class="bar-7"></div>
+          <div class="bar-8"></div><div class="bar-9"></div><div class="bar-10"></div>
+        </div>
+        <main>
+          <a href="/logs/" class="back-link">&#8592; Back to Logs</a>
+
+<h1>First Log Entry: Welcome Aboard</h1>
+<p class="post-meta" style="color:#f90; font-family:'Antonio',sans-serif; letter-spacing:0.1em; font-size:0.85em; text-transform:uppercase;">
+  Stardate 02-272026 &nbsp;&#149;&nbsp; February 27, 2026
+</p>
+
+
+<div class="lcars-tags">
+  
+    
+  
+    
+      <span class="lcars-tag">personal</span>
+    
+  
+    
+      <span class="lcars-tag">welcome</span>
+    
+  
+</div>
+
+
+<hr style="border-color:#36f; margin: 1.5em 0;">
+
+<h2>Captain's Log</h2>
+<p>Welcome to the first entry in this log system. The LCARS interface is online and all systems are reading nominal.</p>
+<p>This is what a standard log entry looks like. You can use <strong>bold text</strong>, <em>italics</em>, and:</p>
+<ul>
+<li>bullet points</li>
+<li>like this</li>
+</ul>
+<p>Or numbered lists:</p>
+<ol>
+<li>First item</li>
+<li>Second item</li>
+<li>Third item</li>
+</ol>
+<h3>Adding Images</h3>
+<p>Images work like standard Markdown:</p>
+<pre><code>![Alt text](path/to/your/image.jpg)
+</code></pre>
+<h3>Adding Links</h3>
+<p>Links are just standard Markdown too:</p>
+<p><a href="https://www.thelcars.com">Visit TheLCARS.com</a></p>
+<hr>
+<p>To write your next post, duplicate this file in <code>src/posts/</code>, rename it, update the frontmatter (title, date, tags), and write your content below the <code>---</code> divider.</p>
+<p><em>End log.</em></p>
+
+
+<hr style="border-color:#36f; margin: 2em 0;">
+<a href="/logs/" class="back-link">&#8592; Back to Logs</a>
+
+        </main>
+        <footer>
+          Content &copy; 2026 <a href="https://yourdomain.com">My LCARS Site</a><br>
+          LCARS Inspired Website Template by <a href="https://www.thelcars.com">www.TheLCARS.com</a>.
+        </footer>
+      </div>
+    </div>
+  </section>
+
+  <script type="text/javascript" src="/assets/lcars.js"></script>
+  <div class="headtrim"> </div>
+  <div class="baseboard"> </div>
+</body>
+</html>
