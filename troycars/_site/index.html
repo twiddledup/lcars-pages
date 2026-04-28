@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TroyCars · Design System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap');
+
+:root {
+  /* ═══ TROYCARS COLOR TOKENS ═══════════════════════════════════ */
+  --bg:           #0c0a14;
+  --bg-panel:     #100d1e;
+  --bg-screen:    #080610;
+  --frame:        #2a2440;
+  --elbow:        #3a3060;
+
+  --violet:       #7b4fa6;
+  --violet-lt:    #9966cc;
+  --violet-pale:  #bb99dd;
+  --purple-dk:    #3d1f66;
+  --purple-mid:   #5c3399;
+
+  --magenta:      #cc44aa;
+  --magenta-hot:  #ff33bb;
+  --magenta-pale: #dd88cc;
+
+  --teal:         #00ccbb;
+  --teal-dk:      #008877;
+  --teal-pale:    #66ddcc;
+  --cyan:         #33ddff;
+
+  --gold:         #ffaa00;
+  --gold-pale:    #ffcc66;
+  --green:        #44cc88;
+  --aqua:         #00eedd;
+
+  --text:         #cdb8f0;
+  --text-dim:     #7755aa;
+  --white:        #ffffff;
+
+  /* Glow shortcuts */
+  --gv: rgba(123,79,166,.5);
+  --gm: rgba(255,51,187,.5);
+  --gt: rgba(0,204,187,.5);
+  --gg: rgba(255,170,0,.5);
+
+  /* Glass variables (user-controllable) */
+  --glass-blur:     18px;
+  --glass-opacity:  0.12;
+  --glass-border:   rgba(255,255,255,0.18);
+  --glass-distort:  8;
+
+  /* Typography */
+  --font-lcars: 'Antonio', 'Arial Narrow', Arial, sans-serif;
+
+  /* Spacing */
+  --gap-sm: 8px;
+  --gap-md: 16px;
+  --gap-lg: 32px;
+
+  /* LCARS structural */
+  --elbow-radius: 28px;
+  --bar-height: 7px;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-lcars);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* SVG Glass Filter — inline in body */
+.glass-filters { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ═══ LAYOUT ═══════════════════════════════════════════════════ */
+.ds-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ═══ TOP CHROME ════════════════════════════════════════════════ */
+.ds-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid var(--magenta);
+}
+.ds-header-pill {
+  background: var(--magenta);
+  color: var(--bg);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  padding: 8px 28px;
+  border-radius: 30px 6px 6px 30px;
+  text-transform: uppercase;
+}
+.ds-header-sub {
+  font-size: .7rem;
+  letter-spacing: .28em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.ds-header-stripe {
+  flex: 1;
+  height: 7px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--magenta), var(--violet), var(--teal), var(--gold), var(--cyan));
+}
+
+/* ═══ SECTION ═══════════════════════════════════════════════════ */
+.ds-section { margin-bottom: 56px; }
+.ds-section-label {
+  font-size: .65rem;
+  letter-spacing: .32em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ds-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--elbow);
+}
+
+/* ═══ COLOR SWATCHES ════════════════════════════════════════════ */
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+.swatch {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.swatch-color {
+  height: 64px;
+  position: relative;
+}
+.swatch-color::after {
+  content: attr(data-hex);
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-size: .6rem;
+  letter-spacing: .08em;
+  opacity: .7;
+  color: rgba(255,255,255,0.8);
+  text-shadow: 0 1px 3px rgba(0,0,0,.8);
+}
+.swatch-info {
+  background: var(--bg-panel);
+  padding: 8px 10px;
+}
+.swatch-name {
+  font-size: .65rem;
+  letter-spacing: .14em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.swatch-var {
+  font-size: .58rem;
+  color: var(--teal-pale);
+  letter-spacing: .06em;
+  margin-top: 2px;
+}
+
+/* ═══ TYPOGRAPHY ════════════════════════════════════════════════ */
+.type-sample { margin-bottom: 20px; padding: 20px; background: var(--bg-panel); border-radius: 12px; border-left: 4px solid var(--violet); }
+.type-label { font-size: .6rem; letter-spacing: .2em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
+.t-display { font-size: 3.2rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--white); line-height: 1; }
+.t-title    { font-size: 2rem;   font-weight: 700; letter-spacing: .1em;  text-transform: uppercase; color: var(--magenta); }
+.t-heading  { font-size: 1.4rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); }
+.t-sub      { font-size: .9rem;  letter-spacing: .22em; text-transform: uppercase; color: var(--violet-pale); }
+.t-body     { font-size: .85rem; letter-spacing: .06em; color: var(--text); }
+.t-caption  { font-size: .65rem; letter-spacing: .18em; text-transform: uppercase; color: var(--text-dim); }
+.t-data     { font-size: .72rem; letter-spacing: .12em; font-family: 'Courier New', monospace; color: var(--gold-pale); }
+
+/* ═══ LCARS BUTTONS ═════════════════════════════════════════════ */
+.btn-grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+.lcars-btn {
+  font-family: var(--font-lcars);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 6px 18px 5px;
+  border-radius: 100vmax;
+  transition: all .2s;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Pill variants */
+.btn-magenta { background: var(--magenta); color: var(--bg); box-shadow: 0 0 0 transparent; }
+.btn-magenta:hover { background: var(--magenta-hot); box-shadow: 0 0 22px var(--gm), 0 0 44px rgba(255,51,187,.2); transform: translateY(-1px); }
+
+.btn-violet { background: var(--violet); color: var(--white); }
+.btn-violet:hover { background: var(--violet-lt); box-shadow: 0 0 22px var(--gv); transform: translateY(-1px); }
+
+.btn-teal { background: var(--teal-dk); color: var(--teal-pale); }
+.btn-teal:hover { background: var(--teal); color: var(--bg); box-shadow: 0 0 22px var(--gt); transform: translateY(-1px); }
+
+.btn-gold { background: var(--gold); color: var(--bg); }
+.btn-gold:hover { box-shadow: 0 0 22px var(--gg); transform: translateY(-1px); }
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--magenta);
+  color: var(--magenta);
+  box-shadow: 0 0 8px rgba(204,68,170,.2), inset 0 0 8px rgba(204,68,170,.05);
+}
+.btn-outline:hover {
+  box-shadow: 0 0 24px var(--gm), 0 0 48px rgba(255,51,187,.15), inset 0 0 12px rgba(255,51,187,.1);
+  border-color: var(--magenta-hot);
+  color: var(--magenta-hot);
+}
+
+/* Glass button */
+.btn-glass {
+  background: rgba(255,255,255,var(--glass-opacity));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1.5px solid var(--glass-border);
+  color: var(--white);
+  box-shadow: 0 4px 24px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn-glass:hover {
+  background: rgba(255,255,255,0.18);
+  box-shadow: 0 0 24px var(--gm), 0 4px 24px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.3);
+  border-color: var(--magenta);
+}
+
+/* Animated outline button */
+.btn-glow-outline {
+  background: transparent;
+  color: var(--cyan);
+  border: none;
+  padding: 8px 24px;
+  position: relative;
+}
+.btn-glow-outline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100vmax;
+  padding: 2px;
+  background: linear-gradient(90deg, var(--magenta), var(--cyan), var(--violet), var(--teal), var(--magenta));
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: borderFlow 3s linear infinite;
+}
+.btn-glow-outline:hover::before { animation-duration: 1s; }
+@keyframes borderFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* LCARS sidebar panel shape */
+.lcars-panel {
+  background: var(--frame);
+  border-radius: 28px 4px 4px 28px;
+  padding: 10px 14px 10px 18px;
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--violet-pale);
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+.lcars-panel:hover { filter: brightness(1.2); transform: translateX(2px); }
+
+/* ═══ LCARS CHROME / ELBOWS ═════════════════════════════════════ */
+.elbow-demo {
+  position: relative;
+  height: 180px;
+  background: var(--bg-panel);
+  border-radius: 16px;
+  overflow: visible;
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+/* Top-left elbow */
+.elbow-tl {
+  position: relative;
+  width: 140px;
+  flex-shrink: 0;
+}
+.elbow-tl-cap {
+  background: var(--magenta);
+  width: 140px;
+  height: 80px;
+  border-radius: 40px 0 0 0;
+  position: relative;
+}
+.elbow-tl-cap::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle at 100% 0, transparent 70%, var(--magenta) 70%);
+}
+.elbow-tl-bar {
+  background: var(--magenta);
+  width: 100%;
+  height: 16px;
+  margin-top: 4px;
+  border-radius: 8px 0 0 8px;
+}
+
+/* Bottom-left elbow */
+.elbow-bl {
+  position: relative;
+  width: 140px;
+  flex-shrink: 0;
+}
+.elbow-bl-cap {
+  background: var(--teal-dk);
+  width: 140px;
+  height: 80px;
+  border-radius: 0 0 0 40px;
+  position: relative;
+}
+.elbow-bl-cap::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle at 100% 100%, transparent 70%, var(--teal-dk) 70%);
+}
+.elbow-bl-bar {
+  background: var(--teal-dk);
+  width: 100%;
+  height: 16px;
+  margin-bottom: 4px;
+  border-radius: 8px 0 0 8px;
+}
+
+/* Shoulder demo */
+.shoulder-demo {
+  padding: 24px;
+  background: var(--bg-panel);
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0;
+  min-height: 200px;
+  overflow: hidden;
+}
+.shoulder-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.shoulder-cap {
+  background: var(--violet);
+  height: 100px;
+  border-radius: 40px 0 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 8px 12px;
+}
+.shoulder-cap-text {
+  font-size: .65rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.7);
+}
+.shoulder-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.shoulder-bar {
+  height: 12px;
+  border-radius: 6px 0 0 6px;
+}
+.shoulder-content {
+  background: var(--bg-screen);
+  border-top: 3px solid var(--elbow);
+  border-left: 3px solid var(--elbow);
+  border-radius: 0 0 0 0;
+  padding: 16px;
+  font-size: .72rem;
+  letter-spacing: .1em;
+  color: var(--text-dim);
+}
+
+/* ═══ GLASS PANELS ══════════════════════════════════════════════ */
+.glass-demo-area {
+  position: relative;
+  min-height: 320px;
+  background: radial-gradient(ellipse at 30% 50%, rgba(123,79,166,.3) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(0,204,187,.2) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 80%, rgba(255,170,0,.15) 0%, transparent 40%),
+              linear-gradient(135deg, #080610 0%, #0c0a14 50%, #100818 100%);
+  border-radius: 20px;
+  padding: 32px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+/* Animated nebula blobs in background */
+.glass-demo-area::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(204,68,170,.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(51,221,255,.1) 0%, transparent 35%);
+  animation: nebulaShift 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes nebulaShift {
+  from { transform: scale(1) translate(0,0); }
+  to   { transform: scale(1.1) translate(-20px, 10px); }
+}
+
+/* Base glass panel */
+.glass-panel {
+  position: relative;
+  background: rgba(255,255,255,var(--glass-opacity));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1.5px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25), inset 0 -1px 0 rgba(0,0,0,.1);
+  overflow: hidden;
+}
+
+/* Glass sheen */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 50%, rgba(255,255,255,.04) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* LCARS-shaped glass (pill left cap) */
+.glass-lcars {
+  border-radius: 28px 8px 8px 28px;
+}
+
+/* Frost variant */
+.glass-frost {
+  --glass-opacity: 0.22;
+  --glass-blur: 32px;
+  --glass-border: rgba(255,255,255,0.28);
+  background: rgba(200,190,255,0.22);
+}
+
+/* Tinted variant */
+.glass-tinted {
+  --glass-opacity: 0.08;
+  background: rgba(123,79,166,0.18);
+  border-color: rgba(123,79,166,0.35);
+}
+
+/* Clear variant */
+.glass-clear {
+  --glass-opacity: 0.05;
+  --glass-blur: 8px;
+  background: rgba(255,255,255,0.05);
+}
+
+/* Refraction glass (uses SVG filter) */
+.glass-refract {
+  filter: url(#liquid-glass);
+}
+
+.glass-title {
+  font-size: .65rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.5);
+  margin-bottom: 12px;
+}
+.glass-content {
+  font-size: .82rem;
+  letter-spacing: .08em;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ═══ IOS 26-STYLE PILL CONTROLS ════════════════════════════════ */
+.controls-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+  padding: 32px;
+  background: linear-gradient(135deg, #e8e4f0, #d8d4e8);
+  border-radius: 20px;
+}
+
+/* Toggle */
+.ios-toggle {
+  position: relative;
+  width: 64px;
+  height: 34px;
+  flex-shrink: 0;
+}
+.ios-toggle input { opacity: 0; width: 0; height: 0; }
+.ios-toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 17px;
+  background: rgba(0,0,0,0.12);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all .3s;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.12), 0 1px 0 rgba(255,255,255,.8);
+}
+.ios-toggle input:checked + .ios-toggle-track {
+  background: var(--teal);
+  box-shadow: 0 0 16px rgba(0,204,187,.4), inset 0 2px 4px rgba(0,0,0,.1);
+}
+.ios-toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.8);
+  box-shadow: 0 2px 8px rgba(0,0,0,.2), 0 1px 2px rgba(0,0,0,.1);
+  transition: transform .3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+.ios-toggle input:checked ~ .ios-toggle-thumb { transform: translateX(30px); }
+
+/* Pill slider */
+.ios-slider-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 36px;
+}
+.ios-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 200px;
+  height: 36px;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.1);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255,255,255,0.5);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.12), 0 1px 0 rgba(255,255,255,.6);
+  outline: none;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.ios-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255,255,255,0.9);
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  cursor: grab;
+  transition: transform .15s;
+}
+.ios-slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.15); }
+
+/* Rainbow slider */
+.ios-slider-rainbow {
+  background: linear-gradient(to right, #cc44aa, #33ddff, #ffaa00, #44cc88, #cc44aa);
+  background-size: 200% 100%;
+  border: 1.5px solid rgba(255,255,255,0.6);
+}
+
+/* ═══ GLASS INTENSITY CONTROL ════════════════════════════════════ */
+.glass-control {
+  background: var(--bg-panel);
+  border: 1px solid var(--elbow);
+  border-radius: 16px;
+  padding: 24px;
+}
+.glass-control-label {
+  font-size: .65rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.control-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.control-name { font-size: .7rem; letter-spacing: .12em; color: var(--teal-pale); width: 80px; flex-shrink: 0; }
+.control-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--elbow);
+  outline: none;
+  cursor: pointer;
+}
+.control-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--gt);
+  cursor: pointer;
+}
+.control-val { font-size: .65rem; color: var(--gold-pale); width: 40px; text-align: right; font-family: monospace; }
+
+/* ═══ ANIMATION PREVIEW ═════════════════════════════════════════ */
+.anim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+.anim-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--elbow);
+  border-radius: 14px;
+  padding: 20px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.anim-demo { width: 48px; height: 48px; position: relative; }
+.anim-label { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--text-dim); }
+
+/* Pulse */
+.pulse-ring {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 2px solid var(--teal);
+  animation: pulseRing 2s ease-out infinite;
+}
+@keyframes pulseRing {
+  0% { transform: scale(0.8); opacity: 1; box-shadow: 0 0 0 0 var(--gt); }
+  70% { transform: scale(1); opacity: .5; box-shadow: 0 0 0 14px transparent; }
+  100% { transform: scale(0.8); opacity: 1; }
+}
+
+/* Scan line */
+.scan-box {
+  width: 48px; height: 48px;
+  border: 1px solid rgba(0,204,187,.3);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.scan-box::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--teal), transparent);
+  box-shadow: 0 0 8px var(--teal);
+  animation: scanLine 2s linear infinite;
+}
+@keyframes scanLine {
+  0% { top: 0; } 100% { top: 100%; }
+}
+
+/* Spinner delta */
+.spin-delta {
+  width: 36px; height: 36px;
+  border: 3px solid var(--frame);
+  border-top-color: var(--magenta);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Blink */
+.blink-bar {
+  width: 40px; height: 8px; border-radius: 4px;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gg);
+  animation: blink 1.2s step-end infinite;
+}
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+/* Float */
+.float-pill {
+  width: 44px; height: 20px; border-radius: 10px;
+  background: var(--violet);
+  box-shadow: 0 0 14px var(--gv);
+  animation: floatUp 2.5s ease-in-out infinite;
+}
+@keyframes floatUp {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Warp data stream */
+.warp-stream {
+  width: 48px; height: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+}
+.warp-line {
+  height: 3px;
+  border-radius: 2px;
+  animation: warpScroll 1s linear infinite;
+}
+@keyframes warpScroll { from { transform: translateX(-100%); } to { transform: translateX(200%); } }
+
+/* ═══ FILE TREE / README SECTION ════════════════════════════════ */
+.file-tree {
+  background: var(--bg-screen);
+  border: 1px solid var(--elbow);
+  border-radius: 14px;
+  padding: 24px;
+  font-family: 'Courier New', monospace;
+  font-size: .72rem;
+  line-height: 2;
+}
+.ft-dir { color: var(--teal); }
+.ft-file { color: var(--violet-pale); }
+.ft-comment { color: var(--text-dim); margin-left: 8px; }
+
+/* ═══ SCROLLBAR ═════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 3px; }
+
+/* ═══ COPY BADGE ════════════════════════════════════════════════ */
+.copy-var {
+  display: inline-block;
+  background: var(--bg-screen);
+  border: 1px solid var(--elbow);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-family: monospace;
+  font-size: .65rem;
+  color: var(--teal-pale);
+  cursor: pointer;
+  transition: background .15s;
+}
+.copy-var:hover { background: var(--elbow); }
+.copy-var.copied { color: var(--green); border-color: var(--green); }
+</style>
+</head>
+<body>
+
+<!-- SVG Liquid Glass Filter -->
+<svg class="glass-filters" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="liquid-glass" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.015 0.012" numOctaves="3" seed="5" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feGaussianBlur in="displaced" stdDeviation="0.4" result="blurred"/>
+      <feComposite in="blurred" in2="SourceGraphic" operator="in"/>
+    </filter>
+    <filter id="glass-heavy" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+      <feTurbulence type="turbulence" baseFrequency="0.008 0.006" numOctaves="4" seed="12" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feGaussianBlur in="displaced" stdDeviation="0.6"/>
+    </filter>
+    <filter id="glass-subtle" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025 0.02" numOctaves="2" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="ds-shell">
+
+  <!-- Header -->
+  <div class="ds-header">
+    <div>
+      <div class="ds-header-pill">TroyCars</div>
+      <div class="ds-header-sub">Design System · v1.0 · LCARS Prodigy Edition</div>
+    </div>
+    <div class="ds-header-stripe"></div>
+    <div style="text-align:right">
+      <div style="font-size:.65rem;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase">Stardate</div>
+      <div style="font-size:.85rem;letter-spacing:.1em;color:var(--gold)" id="stardate">—</div>
+    </div>
+  </div>
+
+  <!-- ── COLORS ───────────────────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">Color System</div>
+    <div class="swatch-grid" id="swatchGrid"></div>
+  </div>
+
+  <!-- ── TYPOGRAPHY ──────────────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">Typography · Font: Antonio</div>
+    <div class="type-sample"><div class="type-label">Display / Hero</div><div class="t-display">TROY · LCARS</div></div>
+    <div class="type-sample"><div class="type-label">Title</div><div class="t-title">Starship Interface</div></div>
+    <div class="type-sample"><div class="type-label">Heading</div><div class="t-heading">Section Header</div></div>
+    <div class="type-sample"><div class="type-label">Subheading</div><div class="t-sub">System Status · Online</div></div>
+    <div class="type-sample"><div class="type-label">Body</div><div class="t-body">LCARS interface design derived from Star Trek: Prodigy aesthetic. Glassmorphic overlays with liquid refraction effects applied to structural chrome elements. Antonio typeface throughout.</div></div>
+    <div class="type-sample"><div class="type-label">Caption / Label</div><div class="t-caption">Stardate 80432.7 · Sector 47 · Online</div></div>
+    <div class="type-sample"><div class="type-label">Data / Monospace</div><div class="t-data">SYS: OK · TEMP: 312K · FLUX: 1.21GW · WARP: 9.9</div></div>
+  </div>
+
+  <!-- ── BUTTONS ─────────────────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">Buttons & Interactive Elements</div>
+    <div class="btn-grid">
+      <button class="lcars-btn btn-magenta">Engage</button>
+      <button class="lcars-btn btn-violet">Systems</button>
+      <button class="lcars-btn btn-teal">Sensors</button>
+      <button class="lcars-btn btn-gold">Alert</button>
+      <button class="lcars-btn btn-outline">Hail</button>
+      <button class="lcars-btn btn-glass">Holodeck</button>
+      <button class="lcars-btn btn-glow-outline">Warp Drive</button>
+    </div>
+  </div>
+
+  <!-- ── LCARS CHROME ────────────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">LCARS Chrome · Elbows, Shoulders & Bars</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+      <!-- Elbow demo -->
+      <div>
+        <div style="font-size:.62rem;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px">Top-Left & Bottom-Left Elbows</div>
+        <div class="elbow-demo">
+          <div class="elbow-tl">
+            <div class="elbow-tl-cap"></div>
+            <div class="elbow-tl-bar"></div>
+            <div class="elbow-tl-bar" style="background:var(--violet-lt);width:80%"></div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.03);border-radius:8px;padding:12px;font-size:.62rem;color:var(--text-dim);letter-spacing:.12em;">
+            CONTENT AREA<br><br>
+            Elbow = large rounded cap + concave inner corner using radial-gradient pseudo-element trick.
+          </div>
+          <div class="elbow-bl" style="align-self:flex-end">
+            <div class="elbow-bl-bar"></div>
+            <div class="elbow-bl-cap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shoulder demo -->
+      <div>
+        <div style="font-size:.62rem;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px">Shoulder (Sidebar + Content Join)</div>
+        <div class="shoulder-demo">
+          <div class="shoulder-left">
+            <div class="shoulder-cap">
+              <div class="shoulder-cap-text">SECTION<br>01</div>
+            </div>
+            <div class="shoulder-bars">
+              <div class="shoulder-bar" style="background:var(--magenta)"></div>
+              <div class="shoulder-bar" style="background:var(--violet)"></div>
+              <div class="shoulder-bar" style="background:var(--teal-dk)"></div>
+              <div class="shoulder-bar" style="background:var(--gold)"></div>
+            </div>
+          </div>
+          <div class="shoulder-content">
+            <div style="font-size:.62rem;letter-spacing:.12em;color:var(--teal)">▸ ACTIVE LOG</div>
+            <div style="margin-top:8px;font-size:.72rem;color:var(--text)">Content panel joins shoulder via border overlap and matching border-radius cutout.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side panels -->
+    <div style="font-size:.62rem;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px">Sidebar Panels</div>
+    <div style="display:flex;flex-direction:column;gap:5px;max-width:200px;">
+      <button class="lcars-panel" style="background:var(--magenta);color:var(--bg)">Home</button>
+      <button class="lcars-panel" style="background:var(--violet);color:var(--white)">Logs</button>
+      <button class="lcars-panel" style="background:var(--teal-dk);color:var(--teal-pale)">About</button>
+      <button class="lcars-panel" style="background:var(--gold);color:var(--bg)">Store</button>
+      <button class="lcars-panel">Systems</button>
+      <button class="lcars-panel">Comms</button>
+    </div>
+  </div>
+
+  <!-- ── GLASS SYSTEM ────────────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">Glass System · Liquid + Backdrop</div>
+
+    <!-- Live glass controls -->
+    <div class="glass-control" style="margin-bottom:20px;" id="glassControl">
+      <div class="glass-control-label">Glass Intensity Controls (live preview)</div>
+      <div class="control-row">
+        <span class="control-name">Blur</span>
+        <input type="range" class="control-slider" id="blurSlider" min="4" max="40" value="18">
+        <span class="control-val" id="blurVal">18px</span>
+      </div>
+      <div class="control-row">
+        <span class="control-name">Opacity</span>
+        <input type="range" class="control-slider" id="opacitySlider" min="2" max="35" value="12">
+        <span class="control-val" id="opacityVal">12%</span>
+      </div>
+      <div class="control-row">
+        <span class="control-name">Distort</span>
+        <input type="range" class="control-slider" id="distortSlider" min="0" max="30" value="8">
+        <span class="control-val" id="distortVal">8</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="lcars-btn btn-teal" onclick="setPreset('clear')" style="font-size:.65rem;padding:4px 14px">Clear</button>
+        <button class="lcars-btn btn-violet" onclick="setPreset('default')" style="font-size:.65rem;padding:4px 14px">Default</button>
+        <button class="lcars-btn btn-magenta" onclick="setPreset('frost')" style="font-size:.65rem;padding:4px 14px">Frost</button>
+      </div>
+    </div>
+
+    <div class="glass-demo-area" id="glassDemoArea">
+      <div class="glass-panel" id="g1">
+        <div class="glass-title">Standard Glass</div>
+        <div class="glass-content">Backdrop blur + rgba fill. Works on all backgrounds.</div>
+      </div>
+      <div class="glass-panel glass-lcars" id="g2">
+        <div class="glass-title">LCARS Glass Panel</div>
+        <div class="glass-content">Pill-cap shape applied to glass for sidebar feel.</div>
+      </div>
+      <div class="glass-panel glass-frost" id="g3">
+        <div class="glass-title">Frost Glass</div>
+        <div class="glass-content">Heavy blur, higher opacity. Max frosted window effect.</div>
+      </div>
+      <div class="glass-panel glass-tinted" id="g4">
+        <div class="glass-title">Tinted Glass</div>
+        <div class="glass-content">Violet tint for LCARS-colored overlays.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── iOS 26 PILL CONTROLS ────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">iOS 26-Style Liquid Glass Controls</div>
+    <div class="controls-area">
+      <!-- Toggle -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <label class="ios-toggle">
+          <input type="checkbox" checked onchange="this.parentElement.querySelector('.ios-toggle-thumb').style.transform = this.checked ? 'translateX(30px)' : ''">
+          <div class="ios-toggle-track"></div>
+          <div class="ios-toggle-thumb"></div>
+        </label>
+        <span style="font-size:.6rem;letter-spacing:.15em;color:#555;text-transform:uppercase">Enabled</span>
+      </div>
+
+      <!-- Blue slider -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="ios-slider-wrap">
+          <input type="range" class="ios-slider" style="background:linear-gradient(to right, #3399ff, rgba(0,0,0,0.08))">
+        </div>
+        <span style="font-size:.6rem;letter-spacing:.15em;color:#555;text-transform:uppercase">Intensity</span>
+      </div>
+
+      <!-- Rainbow slider -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="ios-slider-wrap">
+          <input type="range" class="ios-slider ios-slider-rainbow" value="60">
+        </div>
+        <span style="font-size:.6rem;letter-spacing:.15em;color:#555;text-transform:uppercase">Color Shift</span>
+      </div>
+
+      <!-- Green toggle -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <label class="ios-toggle">
+          <input type="checkbox" onchange="this.parentElement.querySelector('.ios-toggle-thumb').style.transform = this.checked ? 'translateX(30px)' : ''">
+          <div class="ios-toggle-track" style="--teal:#44cc88"></div>
+          <div class="ios-toggle-thumb"></div>
+        </label>
+        <span style="font-size:.6rem;letter-spacing:.15em;color:#555;text-transform:uppercase">Sound</span>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:.65rem;letter-spacing:.14em;color:var(--text-dim)">
+      ↑ These pill-style controls will be used throughout the site for glass effect intensity, sound toggles, and user preferences.
+    </div>
+  </div>
+
+  <!-- ── ANIMATIONS ──────────────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">Animation Library</div>
+    <div class="anim-grid">
+      <div class="anim-card">
+        <div class="anim-demo"><div class="pulse-ring"></div></div>
+        <div class="anim-label">Pulse Ring<br><span style="color:var(--teal-pale)">.pulse-ring</span></div>
+      </div>
+      <div class="anim-card">
+        <div class="anim-demo"><div class="scan-box"></div></div>
+        <div class="anim-label">Scan Line<br><span style="color:var(--teal-pale)">.scan-box</span></div>
+      </div>
+      <div class="anim-card">
+        <div class="anim-demo" style="display:flex;align-items:center;justify-content:center;"><div class="spin-delta"></div></div>
+        <div class="anim-label">Loading Spin<br><span style="color:var(--teal-pale)">.spin-delta</span></div>
+      </div>
+      <div class="anim-card">
+        <div class="anim-demo" style="display:flex;align-items:center;justify-content:center;"><div class="blink-bar"></div></div>
+        <div class="anim-label">Data Blink<br><span style="color:var(--teal-pale)">.blink-bar</span></div>
+      </div>
+      <div class="anim-card">
+        <div class="anim-demo" style="display:flex;align-items:center;justify-content:center;"><div class="float-pill"></div></div>
+        <div class="anim-label">Float<br><span style="color:var(--teal-pale)">.float-pill</span></div>
+      </div>
+      <div class="anim-card">
+        <div class="anim-demo">
+          <div class="warp-stream">
+            <div class="warp-line" style="background:var(--magenta);animation-delay:0s;animation-duration:.8s;width:60%"></div>
+            <div class="warp-line" style="background:var(--teal);animation-delay:.15s;animation-duration:1.1s;width:80%"></div>
+            <div class="warp-line" style="background:var(--violet-lt);animation-delay:.3s;animation-duration:.9s;width:50%"></div>
+            <div class="warp-line" style="background:var(--gold);animation-delay:.05s;animation-duration:1.3s;width:70%"></div>
+            <div class="warp-line" style="background:var(--cyan);animation-delay:.2s;animation-duration:.7s;width:90%"></div>
+          </div>
+        </div>
+        <div class="anim-label">Warp Stream<br><span style="color:var(--teal-pale)">.warp-stream</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CSS VARIABLES EXPORT ────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">CSS Variables — Copy & Paste</div>
+    <div class="file-tree" id="cssVarBlock">
+<span class="ft-dir">/* ═══ TROYCARS DESIGN TOKENS — paste into any :root {} ═══ */</span>
+
+<span class="ft-file">--bg:           #0c0a14;</span>  <span class="ft-comment">/* page background */</span>
+<span class="ft-file">--bg-panel:     #100d1e;</span>  <span class="ft-comment">/* card/panel background */</span>
+<span class="ft-file">--bg-screen:    #080610;</span>  <span class="ft-comment">/* content screen */</span>
+<span class="ft-file">--frame:        #2a2440;</span>  <span class="ft-comment">/* LCARS chrome */</span>
+<span class="ft-file">--elbow:        #3a3060;</span>  <span class="ft-comment">/* borders & dividers */</span>
+
+<span class="ft-file">--magenta:      #cc44aa;</span>  <span class="ft-comment">/* primary accent */</span>
+<span class="ft-file">--magenta-hot:  #ff33bb;</span>  <span class="ft-comment">/* hover/active magenta */</span>
+<span class="ft-file">--violet:       #7b4fa6;</span>  <span class="ft-comment">/* secondary accent */</span>
+<span class="ft-file">--violet-lt:    #9966cc;</span>
+<span class="ft-file">--violet-pale:  #bb99dd;</span>
+<span class="ft-file">--purple-dk:    #3d1f66;</span>
+<span class="ft-file">--purple-mid:   #5c3399;</span>
+
+<span class="ft-file">--teal:         #00ccbb;</span>  <span class="ft-comment">/* data/info accent */</span>
+<span class="ft-file">--teal-dk:      #008877;</span>
+<span class="ft-file">--teal-pale:    #66ddcc;</span>
+<span class="ft-file">--cyan:         #33ddff;</span>
+
+<span class="ft-file">--gold:         #ffaa00;</span>  <span class="ft-comment">/* alert/highlight */</span>
+<span class="ft-file">--gold-pale:    #ffcc66;</span>
+<span class="ft-file">--green:        #44cc88;</span>
+<span class="ft-file">--aqua:         #00eedd;</span>
+
+<span class="ft-file">--text:         #cdb8f0;</span>  <span class="ft-comment">/* body text */</span>
+<span class="ft-file">--text-dim:     #7755aa;</span>  <span class="ft-comment">/* secondary text */</span>
+
+<span class="ft-file">--glass-blur:     18px;</span>   <span class="ft-comment">/* glass backdrop blur */</span>
+<span class="ft-file">--glass-opacity:  0.12;</span>   <span class="ft-comment">/* glass fill opacity */</span>
+<span class="ft-file">--glass-border:   rgba(255,255,255,0.18);</span>
+    </div>
+    <button class="lcars-btn btn-teal" onclick="copyTokens()" style="margin-top:12px" id="copyBtn">Copy All Tokens</button>
+  </div>
+
+  <!-- ── FILE STRUCTURE ─────────────────────────────────── -->
+  <div class="ds-section">
+    <div class="ds-section-label">Project File Structure</div>
+    <div class="file-tree">
+<span class="ft-dir">troycars/</span>
+├── <span class="ft-dir">_site/</span>                       <span class="ft-comment">← deployed files</span>
+│   ├── <span class="ft-file">index.html</span>               <span class="ft-comment">← landing / about</span>
+│   ├── <span class="ft-dir">blog/</span>
+│   │   └── <span class="ft-file">index.html</span>
+│   ├── <span class="ft-dir">store/</span>
+│   │   └── <span class="ft-file">index.html</span>
+│   ├── <span class="ft-dir">assets/</span>
+│   │   ├── <span class="ft-file">tokens.css</span>              <span class="ft-comment">← all CSS vars</span>
+│   │   ├── <span class="ft-file">lcars.css</span>               <span class="ft-comment">← LCARS chrome styles</span>
+│   │   ├── <span class="ft-file">glass.css</span>               <span class="ft-comment">← glass system</span>
+│   │   ├── <span class="ft-file">animations.css</span>
+│   │   └── <span class="ft-file">main.js</span>
+│   ├── <span class="ft-dir">backgrounds/</span>               <span class="ft-comment">← space background assets</span>
+│   │   ├── <span class="ft-file">space-bg.js</span>             <span class="ft-comment">← starfield/nebula engine</span>
+│   │   └── <span class="ft-file">README.md</span>               <span class="ft-comment">← how to tweak</span>
+│   └── <span class="ft-dir">screens/</span>                   <span class="ft-comment">← animation canvases</span>
+│       ├── <span class="ft-file">waveform.js</span>
+│       ├── <span class="ft-file">spectrum.js</span>
+│       └── <span class="ft-file">README.md</span>               <span class="ft-comment">← how to tweak</span>
+├── <span class="ft-dir">cms/</span>                           <span class="ft-comment">← your content editor app</span>
+│   ├── <span class="ft-file">index.html</span>               <span class="ft-comment">← password-protected CMS UI</span>
+│   └── <span class="ft-file">publish.js</span>               <span class="ft-comment">← GitHub commit API</span>
+└── <span class="ft-dir">docs/</span>
+    ├── <span class="ft-file">design-system.html</span>       <span class="ft-comment">← this file</span>
+    └── <span class="ft-file">README.md</span>               <span class="ft-comment">← setup guide</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── STARDATE ─────────────────────────────────────────────────────
+function calcStardate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const start = new Date(year, 0, 1);
+  const frac = (now - start) / (365.25 * 24 * 3600 * 1000);
+  return ((year - 1900) * 1000 + frac * 1000).toFixed(1);
+}
+document.getElementById('stardate').textContent = calcStardate();
+
+// ── COLOR SWATCHES ────────────────────────────────────────────────
+const colors = [
+  { name: 'Magenta',     var: '--magenta',     hex: '#cc44aa' },
+  { name: 'Magenta Hot', var: '--magenta-hot', hex: '#ff33bb' },
+  { name: 'Violet',      var: '--violet',      hex: '#7b4fa6' },
+  { name: 'Violet Lt',   var: '--violet-lt',   hex: '#9966cc' },
+  { name: 'Violet Pale', var: '--violet-pale', hex: '#bb99dd' },
+  { name: 'Purple Dk',   var: '--purple-dk',   hex: '#3d1f66' },
+  { name: 'Purple Mid',  var: '--purple-mid',  hex: '#5c3399' },
+  { name: 'Teal',        var: '--teal',        hex: '#00ccbb' },
+  { name: 'Teal Dk',     var: '--teal-dk',     hex: '#008877' },
+  { name: 'Teal Pale',   var: '--teal-pale',   hex: '#66ddcc' },
+  { name: 'Cyan',        var: '--cyan',        hex: '#33ddff' },
+  { name: 'Gold',        var: '--gold',        hex: '#ffaa00' },
+  { name: 'Gold Pale',   var: '--gold-pale',   hex: '#ffcc66' },
+  { name: 'Green',       var: '--green',       hex: '#44cc88' },
+  { name: 'Aqua',        var: '--aqua',        hex: '#00eedd' },
+  { name: 'BG',          var: '--bg',          hex: '#0c0a14' },
+  { name: 'BG Panel',    var: '--bg-panel',    hex: '#100d1e' },
+  { name: 'BG Screen',   var: '--bg-screen',   hex: '#080610' },
+  { name: 'Frame',       var: '--frame',       hex: '#2a2440' },
+  { name: 'Elbow',       var: '--elbow',       hex: '#3a3060' },
+  { name: 'Text',        var: '--text',        hex: '#cdb8f0' },
+  { name: 'Text Dim',    var: '--text-dim',    hex: '#7755aa' },
+];
+
+const grid = document.getElementById('swatchGrid');
+colors.forEach(c => {
+  grid.innerHTML += `
+    <div class="swatch">
+      <div class="swatch-color" style="background:${c.hex}" data-hex="${c.hex}"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">${c.name}</div>
+        <span class="copy-var swatch-var" onclick="copyText('var(${c.var})', this)">var(${c.var})</span>
+      </div>
+    </div>`;
+});
+
+// ── GLASS CONTROLS ────────────────────────────────────────────────
+const blurSlider    = document.getElementById('blurSlider');
+const opacitySlider = document.getElementById('opacitySlider');
+const distortSlider = document.getElementById('distortSlider');
+
+function updateGlass() {
+  const blur    = blurSlider.value;
+  const opacity = opacitySlider.value / 100;
+  const distort = distortSlider.value;
+  document.getElementById('blurVal').textContent    = blur + 'px';
+  document.getElementById('opacityVal').textContent = opacitySlider.value + '%';
+  document.getElementById('distortVal').textContent = distort;
+  document.documentElement.style.setProperty('--glass-blur',    blur + 'px');
+  document.documentElement.style.setProperty('--glass-opacity', opacity);
+  // Update SVG filter distort scale
+  document.querySelectorAll('feDisplacementMap').forEach(el => el.setAttribute('scale', distort));
+}
+blurSlider.addEventListener('input', updateGlass);
+opacitySlider.addEventListener('input', updateGlass);
+distortSlider.addEventListener('input', updateGlass);
+
+function setPreset(p) {
+  const presets = {
+    clear:   { blur: 6,  opacity: 5,  distort: 3 },
+    default: { blur: 18, opacity: 12, distort: 8 },
+    frost:   { blur: 36, opacity: 28, distort: 2 },
+  };
+  const pr = presets[p];
+  blurSlider.value    = pr.blur;
+  opacitySlider.value = pr.opacity;
+  distortSlider.value = pr.distort;
+  updateGlass();
+}
+
+// ── COPY HELPERS ──────────────────────────────────────────────────
+function copyText(text, el) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (el) {
+      el.classList.add('copied');
+      el.textContent = 'Copied!';
+      setTimeout(() => {
+        el.classList.remove('copied');
+        el.textContent = text;
+      }, 1500);
+    }
+  });
+}
+
+function copyTokens() {
+  const tokens = `:root {
+  --bg: #0c0a14;
+  --bg-panel: #100d1e;
+  --bg-screen: #080610;
+  --frame: #2a2440;
+  --elbow: #3a3060;
+  --magenta: #cc44aa;
+  --magenta-hot: #ff33bb;
+  --magenta-pale: #dd88cc;
+  --violet: #7b4fa6;
+  --violet-lt: #9966cc;
+  --violet-pale: #bb99dd;
+  --purple-dk: #3d1f66;
+  --purple-mid: #5c3399;
+  --teal: #00ccbb;
+  --teal-dk: #008877;
+  --teal-pale: #66ddcc;
+  --cyan: #33ddff;
+  --gold: #ffaa00;
+  --gold-pale: #ffcc66;
+  --green: #44cc88;
+  --aqua: #00eedd;
+  --text: #cdb8f0;
+  --text-dim: #7755aa;
+  --glass-blur: 18px;
+  --glass-opacity: 0.12;
+  --glass-border: rgba(255,255,255,0.18);
+  --font-lcars: 'Antonio', 'Arial Narrow', Arial, sans-serif;
+}`;
+  const btn = document.getElementById('copyBtn');
+  navigator.clipboard.writeText(tokens).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy All Tokens', 2000);
+  });
+}
+</script>
+</body>
+</html>
